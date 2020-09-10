@@ -1,51 +1,69 @@
-let addbtn = document.querySelectorAll(".addbtn"),
-  arr = [],
-  i = 0;
+
+shownotes();
+
+let addbtn = document.querySelectorAll(".addbtn");
+
 addbtn.forEach((e) => {
-  e.addEventListener("click", passit);
+  e.addEventListener("click", initial);
 });
 
-function passit(e) {
-  i++;
-  let a = e.target.previousElementSibling.innerText,
-    j = 1;
-  arr.push(a);
-  let newarr = removeDuplicates(arr);
-  addtolist(newarr);
-}
-
-function removeDuplicates(array) {
-  let a = [];
-  array.map((x) => {
-    if (!a.includes(x)) {
-      a.push(x);
-    }
-  });
-  return a;
-}
-function addtolist(arr) {
-  let html = "",
-    i = 0;
-  if (arr.length > 0) {
-    document.querySelector("table").classList.add("d-block");
+function checklocal() {
+  let notes = localStorage.getItem("notes");
+  if (notes === null) {
+    notesobj = [];
   } else {
-    document.querySelector("table").classList.add("d-none");
+    notesobj = JSON.parse(notes);
   }
-  arr.forEach((e, i) => {
-    i++;
-    html += `<tr>
-        <th scope="row">${i}</th>
-        <td>${e}</td>
-        <td class="increased">1</td>
-        <td><button class="btn btn-outline-secondary" id=${i} onclick="removey(this.parentElement.parentElement,this.id,arr)">Remove</button></td>
-    </tr>`;
-    document.querySelector("tbody").innerHTML = html;
-  });
 }
 
-function removey(param, ind, arr) {
-  param.remove();
-  arr.splice(ind, 1);
-  console.log(ind, arr);
-  // console.log(param);
+
+function initial(e) {
+  e.preventDefault();
+  checklocal();
+  let text = e.target.previousElementSibling.innerText;
+  let myob = {
+    name: text,
+    quantity: 1
+  };
+
+
+  // if already exists increase the value
+  for (const key in notesobj) {
+  notesobj[key].name === myob.name ?notesobj[key].quantity++:" ";    
+  }
+
+
+  //  if exists then dont push
+ notesobj.some((e) => e.name === myob.name) ? " ": notesobj.push(myob);  
+  
+//  sets values and displays
+ localStorage.setItem("notes", JSON.stringify(notesobj));
+  shownotes();
+}
+
+function shownotes() {
+  checklocal();
+  let html = "";
+  notesobj.forEach((e, i) => {
+    html += `<tr>
+            <th scope="row">${i + 1}</th>
+            <td>${e.name}</td>
+            <td class="increased">${e.quantity}</td>
+            <td><button class="btn btn-outline-secondary" id=${i} onclick="removey(this.id)">Remove</button></td>
+        </tr>`;
+  });
+  document.querySelector("tbody").innerHTML = html;
+}
+
+function clearal() {
+  localStorage.clear();
+  shownotes();
+}
+
+function removey(a) {
+  let ind = parseInt(a);
+  checklocal();
+  notesobj.splice(ind, 1);
+  localStorage.setItem("notes", JSON.stringify(notesobj));
+  shownotes();
 }
