@@ -35,7 +35,6 @@ function initial(e) {
 
   //  if exists then dont push
  notesobj.some((e) => e.name === myob.name) ? " ": notesobj.push(myob);  
-  document.querySelector("table").classList.add("d-block");
 //  sets values and displays
  localStorage.setItem("notes", JSON.stringify(notesobj));
   shownotes();
@@ -53,12 +52,11 @@ function shownotes() {
         </tr>`;
   });
   if(notesobj.length>0){
-    document.querySelector("tbody").innerHTML = html;
-  }
-  else{
-    document.querySelector("table").classList.remove("d-block");
-    document.querySelector("tbody").innerHTML = "<h2>ADD Something</h2>";
-  }
+    document.querySelector("thead").classList.remove('d-none');
+    document.querySelector("tbody").innerHTML = html;}
+  else
+    {document.querySelector("tbody").innerHTML = `<h2 class="mx-auto text-center my-5">Add Some thing to the cart</h2>`;
+    document.querySelector("thead").classList.add('d-none');}
 }
 
 function clearal() {
